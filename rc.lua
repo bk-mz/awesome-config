@@ -10,10 +10,7 @@ require("naughty")
 -- Load Debian menu entries
 require("debian.menu")
 
--- utility
 require("utility")
-
-autorun = true
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -40,25 +37,6 @@ do
 end
 -- }}}
 
--- {{{ KBDD
-
-kbdwidget = widget({type = "textbox", name = "kbdwidget"})
-kbdwidget.border_color = beautiful.fg_normal
-kbdwidget.text = "en"
-
-dbus.request_name("session", "ru.gentoo.kbdd") 
-dbus.add_match("session", "interface='ru.gentoo.kbdd',member='layoutChanged'") 
-dbus.add_signal("ru.gentoo.kbdd", function(...) 
-    local data = {...} 
-    local layout = data[2] 
-    lts = {[0] = "en", [1] = "ru"} 
-    kbdwidget.text = " "..lts[layout].." " 
-    end 
-) 
-end
-  
---}}}
-
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
@@ -78,18 +56,7 @@ modkey = "Mod4"
 -- Table of layouts to cover with awful.layout.inc, order matters.
 layouts =
 {
-    awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier
+    awful.layout.suit.floating
 }
 -- }}}
 
@@ -203,7 +170,6 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s],
-        kbdwidget,
         mytextclock,
         s == 1 and mysystray or nil,
         mytasklist[s],
@@ -401,18 +367,15 @@ client.add_signal("focus", function(c) c.border_color = beautiful.border_focus e
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
--- {{{ AUTORUN  
+autorun = true
  
-autorunApps = 
-   {
-   "kbdd",
-}
+autorunApps = {}
  
-runOnceApps = 
-   {
-    "dropbox start",    
+runOnceApps = {
+    "dropbox start",        
     "gajim",
-    "gnome-settings-daemon",    
+    "gnome-settings-daemon",
+    "gnome-screensaver"
 }
  
 if autorun then
@@ -423,4 +386,4 @@ if autorun then
       utility.run_once(runOnceApps[app])
    end
 end
--- }}}
+
